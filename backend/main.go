@@ -4,10 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
+	"simple-project-be/backend/database"
+
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	// init db
+	database.InitDB()
+
 	// init router
 	router := mux.NewRouter()
 
