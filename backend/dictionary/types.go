@@ -16,6 +16,7 @@ type Product struct {
 }
 
 type APIResponse struct {
-	Data	interface{}	`json:"data"`
-	Error	string		`json:"error"`
+	Data	 interface{}	`json:"data"`
+	Detail interface{}	`json:"detail,omitempty"`
+	Error	 string				`json:"error"`
 }
