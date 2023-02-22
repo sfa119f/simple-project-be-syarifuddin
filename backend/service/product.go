@@ -48,3 +48,16 @@ func GetProduct(id int64) (dictionary.Product, error) {
 	}
 	return res, nil
 }
+
+func InsertProduct(product dictionary.Product) error {
+	db := database.GetDB()
+
+	query :=`
+	insert into products (nama, jenis, jumlah, harga)
+	values ($1, $2, $3, $4)
+	`
+
+	_, err := db.Exec(query, product.Nama, product.Jenis, product.Jumlah, product.Harga)
+
+	return err
+}

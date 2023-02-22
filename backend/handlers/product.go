@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -55,5 +56,27 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: nil, Error: dictionary.UndisclosedError})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: res, Error: dictionary.NoError})
+	}
+}
+
+func InsertProduct(w http.ResponseWriter, r *http.Request) {
+	product := dictionary.Product{}
+	json.NewDecoder(r.Body).Decode(&product)
+
+	err := service.InsertProduct(product)
+	if err != nil {
+		fmt.Println("err insert product:", err)
+	}
+
+	if err != nil {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: nil,
+			Error: dictionary.UndisclosedError,
+		})
+	} else {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: product,
+			Error: dictionary.NoError,
+		})
 	}
 }
