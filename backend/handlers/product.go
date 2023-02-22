@@ -35,11 +35,18 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 	if (order == "true") { desc = true }
 
 	res, err := service.GetProducts(pageInt64, sizeInt64, order_by, desc)
-	detail := map[string]interface{}{"page": pageInt64, "size": sizeInt64, "order_by": order_by, "desc": desc}
+	detail := map[string]interface{}{
+		"page": pageInt64, "size": sizeInt64, "order_by": order_by, "desc": desc,
+	}
 	if err != nil {
-		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: nil, Detail: detail, Error: dictionary.UndisclosedError})
+		fmt.Println("err get list products:", err)
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: nil, Detail: detail, Error: dictionary.UndisclosedError,
+		})
 	} else {
-		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: res, Detail: detail, Error: dictionary.NoError})
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: res, Detail: detail, Error: dictionary.NoError,
+		})
 	}
 }
 
@@ -53,9 +60,14 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 	res, err := service.GetProduct(idInt64)
 	
 	if err != nil {
-		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: nil, Error: dictionary.UndisclosedError})
+		fmt.Println("err get product:", err)
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: nil, Error: dictionary.UndisclosedError,
+		})
 	} else {
-		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: res, Error: dictionary.NoError})
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: res, Error: dictionary.NoError,
+		})
 	}
 }
 
@@ -66,17 +78,12 @@ func InsertProduct(w http.ResponseWriter, r *http.Request) {
 	res, err := service.InsertProduct(arr_product)
 	if err != nil {
 		fmt.Println("err insert product:", err)
-	}
-
-	if err != nil {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: nil,
-			Error: dictionary.UndisclosedError,
+			Data: nil, Error: dictionary.UndisclosedError,
 		})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: res,
-			Error: dictionary.NoError,
+			Data: res, Error: dictionary.NoError,
 		})
 	}
 }
@@ -87,18 +94,13 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	err := service.UpdateProduct(product)
 	if err != nil {
-		fmt.Println("err delete product:", err)
-	}
-
-	if err != nil {
+		fmt.Println("err update product:", err)
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: nil,
-			Error: dictionary.UndisclosedError,
+			Data: nil, Error: dictionary.UndisclosedError,
 		})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: product,
-			Error: dictionary.NoError,
+			Data: product, Error: dictionary.NoError,
 		})
 	}
 }
@@ -110,17 +112,12 @@ func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	res, err := service.DeleteProduct(arr_id)
 	if err != nil {
 		fmt.Println("err delete product:", err)
-	}
-
-	if err != nil {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: nil,
-			Error: dictionary.UndisclosedError,
+			Data: nil, Error: dictionary.UndisclosedError,
 		})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: res,
-			Error: dictionary.NoError,
+			Data: res, Error: dictionary.NoError,
 		})
 	}
 }
