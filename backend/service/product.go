@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"database/sql"
 	"errors"
+	"strings"
 
 	"simple-project-be/backend/database"
 	"simple-project-be/backend/dictionary"
@@ -43,7 +44,6 @@ func GetProduct(id int64) (dictionary.Product, error) {
 		if (err == sql.ErrNoRows) {
 			return res, errors.New("user nil")
 		}
-		fmt.Println(err)
 		return res, errors.New("error")
 	}
 	return res, nil
@@ -60,4 +60,24 @@ func InsertProduct(product dictionary.Product) error {
 	_, err := db.Exec(query, product.Nama, product.Jenis, product.Jumlah, product.Harga)
 
 	return err
+}
+
+func DeleteProduct(arr_id []int64) ([]int64, error) {
+	db := database.GetDB()
+
+	string_id := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(arr_id)), ", "), "[]")
+	query := fmt.Sprint("delete from products where id in (", string_id, ") returning id")
+
+	rows, err := db.Query(query)
+	if err != nil { return nil, err }
+	defer rows.Close()
+
+	var del_id []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil { return del_id, err }
+		del_id = append(del_id, id)
+	}
+
+	return del_id, err
 }

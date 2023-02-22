@@ -24,6 +24,7 @@ func main() {
 	router.HandleFunc("/products", handlers.GetProducts).Methods(http.MethodGet)
 	router.HandleFunc("/product/{id}", handlers.GetProduct).Methods(http.MethodGet)
 	router.HandleFunc("/addProduct", handlers.InsertProduct).Methods(http.MethodPost)
+	router.HandleFunc("/deleteProduct", handlers.DeleteProduct).Methods(http.MethodDelete)
 
 	http.ListenAndServe(":8000", router)
 }

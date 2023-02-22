@@ -80,3 +80,25 @@ func InsertProduct(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 }
+
+func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	var arr_id []int64
+	json.NewDecoder(r.Body).Decode(&arr_id)
+
+	res, err := service.DeleteProduct(arr_id)
+	if err != nil {
+		fmt.Println("err delete product:", err)
+	}
+
+	if err != nil {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: nil,
+			Error: dictionary.UndisclosedError,
+		})
+	} else {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{
+			Data: res,
+			Error: dictionary.NoError,
+		})
+	}
+}
