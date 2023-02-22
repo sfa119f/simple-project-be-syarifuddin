@@ -2,20 +2,32 @@ package service
 
 import (
 	"fmt"
-	"strings"
 
 	"simple-project-be/backend/database"
 	"simple-project-be/backend/dictionary"
+	"simple-project-be/backend/utils"
 )
 
-func GetProducts(page int64, size int64, order_by string, desc bool) ([]dictionary.Product, error) {
+func GetProducts (
+	jenis string, harga_min int64, harga_max int64, page int64, size int64, order_by string, desc bool,
+) ([]dictionary.Product, error) {
 	db := database.GetDB()
 
+	str_select := ""
+	if (jenis != "") { str_select = fmt.Sprint("jenis = '", jenis, "'and ") }
+	if (harga_min != 0) { str_select = fmt.Sprintln(str_select, "harga >= ", harga_min, "and") }
+	if (harga_max != 0) { str_select = fmt.Sprintln(str_select, "harga <= ", harga_max, "and") }
+	if (str_select != "") {
+		str_select = fmt.Sprint("where ", str_select[:len(str_select) - 4])
+	}
+
+	offset := (page - 1) * size
 	order := "asc"
 	if (desc) { order = "desc" }
 	query := fmt.Sprintln(
-		"select * from products order by", order_by, order, 
-		"offset ((", page, "- 1 ) *", size, ") rows fetch next", size , "rows only;",
+		"select * from products", str_select,
+		"order by", order_by, order, 
+		"limit", size, "offset (", offset, ")",
 	)
 
 	rows, err := db.Query(query)
@@ -86,7 +98,8 @@ func UpdateProduct(product dictionary.Product) error {
 	db := database.GetDB()
 
 	query := 
-		`update products set nama = $2, jenis = $3, jumlah = $4, harga = $5 where id = $1`
+		`update products set nama = $2, jenis = $3, jumlah = $4, harga = $5 
+		where id = $1 returning id`
 
 	var id int64
 	if err := 
@@ -100,7 +113,7 @@ func UpdateProduct(product dictionary.Product) error {
 func DeleteProduct(arr_id []int64) ([]int64, error) {
 	db := database.GetDB()
 
-	string_id := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(arr_id)), ", "), "[]")
+	string_id := utils.ArrIntToStr(arr_id)
 	query := fmt.Sprint("delete from products where id in (", string_id, ") returning id")
 
 	rows, err := db.Query(query)
