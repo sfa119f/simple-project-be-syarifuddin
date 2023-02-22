@@ -73,6 +73,16 @@ func InsertProduct(arr_product []dictionary.Product) ([]int64, error) {
 	return arr_id, err
 }
 
+func UpdateProduct(product dictionary.Product) error {
+	db := database.GetDB()
+
+	query := `update products set nama = $2, jenis = $3, jumlah = $4, harga = $5 where id = $1`
+
+	_, err := db.Exec(query, product.Id, product.Nama, product.Jenis, product.Jumlah, product.Harga)
+
+	return err
+}
+
 func DeleteProduct(arr_id []int64) ([]int64, error) {
 	db := database.GetDB()
 
