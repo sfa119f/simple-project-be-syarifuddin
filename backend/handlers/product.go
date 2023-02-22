@@ -60,10 +60,10 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func InsertProduct(w http.ResponseWriter, r *http.Request) {
-	product := dictionary.Product{}
-	json.NewDecoder(r.Body).Decode(&product)
+	arr_product := []dictionary.Product{}
+	json.NewDecoder(r.Body).Decode(&arr_product)
 
-	err := service.InsertProduct(product)
+	res, err := service.InsertProduct(arr_product)
 	if err != nil {
 		fmt.Println("err insert product:", err)
 	}
@@ -75,7 +75,7 @@ func InsertProduct(w http.ResponseWriter, r *http.Request) {
 		})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{
-			Data: product,
+			Data: res,
 			Error: dictionary.NoError,
 		})
 	}

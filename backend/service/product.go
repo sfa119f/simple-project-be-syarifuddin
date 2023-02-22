@@ -49,17 +49,28 @@ func GetProduct(id int64) (dictionary.Product, error) {
 	return res, nil
 }
 
-func InsertProduct(product dictionary.Product) error {
+func InsertProduct(arr_product []dictionary.Product) ([]int64, error) {
 	db := database.GetDB()
 
-	query :=`
-	insert into products (nama, jenis, jumlah, harga)
-	values ($1, $2, $3, $4)
-	`
+	query :=`insert into products (nama, jenis, jumlah, harga) values `
+	for idx, el := range arr_product {
+		query = fmt.Sprint(query, "('", el.Nama, "', '", el.Jenis, "', ", el.Jumlah, ", ", el.Harga, ")")
+		if (idx != len(arr_product) - 1) { query = fmt.Sprint(query, ", ") }
+	}
+	query = fmt.Sprint(query, " returning id")
 
-	_, err := db.Exec(query, product.Nama, product.Jenis, product.Jumlah, product.Harga)
+	rows, err := db.Query(query)
+	if err != nil { return nil, err }
+	defer rows.Close()
 
-	return err
+	var arr_id []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil { return arr_id, err }
+		arr_id = append(arr_id, id)
+	}
+
+	return arr_id, err
 }
 
 func DeleteProduct(arr_id []int64) ([]int64, error) {
