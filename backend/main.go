@@ -22,6 +22,7 @@ func main() {
 		fmt.Fprintf(w, "Hello World!")
 	}).Methods(http.MethodGet)
 	router.HandleFunc("/products", handlers.GetProducts).Methods(http.MethodGet)
+	router.HandleFunc("/product/{id}", handlers.GetProduct).Methods(http.MethodGet)
 
 	http.ListenAndServe(":8000", router)
 }

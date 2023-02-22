@@ -2,6 +2,9 @@ package service
 
 import (
 	"fmt"
+	"database/sql"
+	"errors"
+
 	"simple-project-be/backend/database"
 	"simple-project-be/backend/dictionary"
 )
@@ -30,3 +33,18 @@ func GetProducts(page int64, size int64, order_by string, desc bool) ([]dictiona
 	
 	return products, nil
 } 
+
+func GetProduct(id int64) (dictionary.Product, error) {
+	db := database.GetDB()
+	query := `select * from products where id = $1`
+
+	var res dictionary.Product
+	if err := db.QueryRow(query, id).Scan(&res.Id, &res.Nama, &res.Jenis, &res.Jumlah, &res.Harga); err != nil {
+		if (err == sql.ErrNoRows) {
+			return res, errors.New("user nil")
+		}
+		fmt.Println(err)
+		return res, errors.New("error")
+	}
+	return res, nil
+}

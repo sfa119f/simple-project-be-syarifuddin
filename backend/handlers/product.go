@@ -5,8 +5,11 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
 	"simple-project-be/backend/dictionary"
 	"simple-project-be/backend/service"
+
+	"github.com/gorilla/mux"
 )
 
 func GetProducts(w http.ResponseWriter, r *http.Request) {
@@ -36,5 +39,21 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: nil, Detail: detail, Error: dictionary.UndisclosedError})
 	} else {
 		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: res, Detail: detail, Error: dictionary.NoError})
+	}
+}
+
+func GetProduct(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	idstring := params["id"]
+	idInt64, err := strconv.ParseInt(idstring, 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	res, err := service.GetProduct(idInt64)
+	
+	if err != nil {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: nil, Error: dictionary.UndisclosedError})
+	} else {
+		json.NewEncoder(w).Encode(dictionary.APIResponse{Data: res, Error: dictionary.NoError})
 	}
 }
